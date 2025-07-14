@@ -1,3 +1,4 @@
 .vscode/
-src/
+src
+!src/nginx
 db-data/

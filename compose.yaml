@@ -16,6 +16,8 @@ services:
       - ./src:/var/www/html
     ports:
       - "9000:9000"
+    depends_on:
+      - database
     networks:
       - laravel
 
@@ -26,7 +28,7 @@ services:
       - "8080:80"
     volumes:
       - ./src:/var/www/html
-      - ./src/nginx:/etc/nginx/conf.d
+      - ./nginx/conf.d:/etc/nginx/conf.d
     environment:
       - UID=1000
       - GID=1000
@@ -34,9 +36,9 @@ services:
       - laravel
     depends_on:
       - php
-      - postgres
+      - database
 
-  postgres:
+  database:
     image: postgres:14
     container_name: postgres
     restart: always
@@ -50,6 +52,12 @@ services:
       - POSTGRES_PASSWORD=password
     networks:
       - laravel
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
 
   pgadmin:
     image: dpage/pgadmin4
@@ -57,9 +65,9 @@ services:
     ports:
       - "5050:80"
     depends_on:
-      - postgres
+      - database
     environment:
-      - PGADMIN_DEFAULT_EMAIL=pedroozorio30@gmail.com
+      - PGADMIN_DEFAULT_EMAIL=user@test.com
       - PGADMIN_DEFAULT_PASSWORD=password
     networks:
       - laravel

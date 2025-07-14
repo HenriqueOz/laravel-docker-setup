@@ -2,6 +2,7 @@ FROM php:8.4-fpm
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
+    sudo \
     curl \
     unzip \
     libpng-dev \
@@ -12,7 +13,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath intl gd
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN useradd -s /bin/bash www
+
+USER www
 
 ENTRYPOINT ["php-fpm"]
 
