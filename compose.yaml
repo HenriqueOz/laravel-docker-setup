@@ -28,7 +28,7 @@ services:
       - "8080:80"
     volumes:
       - ./src:/var/www/html
-      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
     environment:
       - UID=1000
       - GID=1000

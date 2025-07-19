@@ -13,12 +13,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath intl gd
 
-# COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN useradd -s /bin/bash www
+RUN useradd -s /bin/bash -m app
 
-USER www
+RUN chown -R 1000:1000 /var/www
+
+USER app
+
+RUN echo 'export PATH="$PATH:$HOME/.composer/vendor/bin"' >> ~/.bashrc
 
 ENTRYPOINT ["php-fpm"]
 
